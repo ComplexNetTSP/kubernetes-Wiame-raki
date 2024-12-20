@@ -1,0 +1,10 @@
+version: "3.9"  # the version of Docker Compose
+services:
+  flask-app:
+    image: wiame1306/my-flask-app:v2  # Specify the Docker Hub image
+    container_name: flask-container-2
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+    restart: always
