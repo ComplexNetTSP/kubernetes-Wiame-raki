@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    container_name: mongodb_container
+    ports:
+      - 8000:8000 # Port exposé pour MongoDB
+    volumes:
+      - mongodb_data:/data/db # Persistance des données
+      - mongodb_configdb:/data/configdb # Volume pour les données de configuration
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    command: mongod --port 8000 # Commande pour forcer MongoDB à écouter sur le port 8000
+
+volumes:
+  mongodb_data:
+  mongodb_configdb:
