@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Flask app without DB connection
+  flask-app-no-db:
+    image: wiame1306/my-flask-app:v2
+    container_name: flask-app-no-db
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - flask-mongo-network
+    ports:
+      - "5001:5000"  # Host:Container port mapping
+    restart: always
+
+  # Flask app with DB connection
+  flask-app-with-db:
+    image: wiame1306/my-flask-app:v3
+    container_name: flask-app-with-db
+    environment:
+      - MONGO_URI=mongodb://root:root@mongo:8000/
+    networks:
+      - flask-mongo-network
+    ports:
+      - "5002:5000"
+    restart: always
+
+  # NGINX Load Balancer
+  nginx:
+    build:
+      context: .  # Path to the directory containing the Dockerfile
+      dockerfile: Dockerfile  # Optional if the file is named `Dockerfile`
+    container_name: nginx-load-balancer
+    ports:
+      - "8080:80"  # Expose the custom NGINX load balancer
+    networks:
+      - flask-mongo-network
+    depends_on:
+      - flask-app-no-db
+      - flask-app-with-db
+    restart: always
+
+  # MongoDB database
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "8000:8000"  # Expose MongoDB on port 8000
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    command: mongod --port 8000  # Force MongoDB to listen on port 8000
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_configdb:/data/configdb  # Persist configuration
+    networks:
+      - flask-mongo-network
+    restart: always
+
+volumes:
+  mongodb_data:
+  mongodb_configdb:
+
+networks:
+  flask-mongo-network:
+    driver: bridge
