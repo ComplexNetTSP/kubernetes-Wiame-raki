@@ -1,0 +1,25 @@
+replicaCount: 1
+
+mongodb:
+  image: "mongo:latest"
+  username: "root"
+  password: "example"
+  port: 27017
+
+webdb:
+  image: "wiame1306/my-flask-app:v5"
+  replicas: 3
+  port: 5000
+  database:
+    name: "flask_app_db"
+    collection: "requests"
+
+webnodb:
+  image: "wiame1306/my-flask-app:v2"
+  replicas: 3
+  port: 5000
+
+ingress:
+  enabled: true
+  webdb_host: "webdb.wraki.net4255.luxbulb.org"
+  webnodb_host: "webnodb.wraki.net4255.luxbulb.org"

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webdb-deployment
+  namespace: wraki
+spec:
+  replicas: {{ .Values.webdb.replicas }}
+  selector:
+    matchLabels:
+      app: webdb
+  template:
+    metadata:
+      labels:
+        app: webdb
+    spec:
+      containers:
+      - name: webdb-container
+        image: {{ .Values.webdb.image }}
+        ports:
+        - containerPort: {{ .Values.webdb.port }}
+        env:
+        - name: MONGO_URI
+          value: "mongodb://root:example@mongodb-service.wraki.svc.cluster.local:27017/"
+        - name: MONGO_DB_NAME
+          value: {{ .Values.webdb.database.name }}
+        - name: MONGO_COLLECTION_NAME
+          value: {{ .Values.webdb.database.collection }}
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: db-host
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: db-port
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "100Mi"
+          limits:
+            cpu: "200m"
+            memory: "200Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webdb-service
+  namespace: wraki
+spec:
+  selector:
+    app: webdb
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP
