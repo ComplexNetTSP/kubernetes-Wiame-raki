@@ -1,14 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wraki-ingress
-  namespace: wraki
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  name: webapp-ingress
 spec:
   rules:
-  - host: {{ .Values.ingress.webnodb_host }}
+  - host: webnodb.wraki.net4255.luxbulb.org
     http:
       paths:
       - path: /
@@ -18,7 +14,7 @@ spec:
             name: webnodb-service
             port:
               number: 80
-  - host: {{ .Values.ingress.webdb_host }}
+  - host: webdb.wraki.net4255.luxbulb.org
     http:
       paths:
       - path: /

@@ -1,4 +1,0 @@
-apiVersion: v2
-name: my-infrastructure
-description: A Helm chart for deploying MongoDB, webdb, and webnodb with ConfigMap for DB configuration
-version: 1.0.0
