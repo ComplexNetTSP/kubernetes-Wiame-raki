@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mongodb-restrict-access
+  namespace: wraki 
+spec:
+  podSelector:
+    matchLabels:
+      app: mongodb  
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: webdb  
+ 
